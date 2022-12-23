@@ -6,6 +6,7 @@ import { Modal } from "./Modal/Modal";
 import { Button } from "./Button/Button";
 import { Loader } from "./Loader/Loader";
 import { Notification } from "./Notification/Notification";
+import { AppContainer } from "./App.styled";
 class App extends Component {
   state = {
     data: [],
@@ -85,7 +86,7 @@ class App extends Component {
       if (this.page > totalPages) {
         return this.setState({
           loading: false,
-          status: "rejected"
+          status: "resolved"
         })
       }
       return this.setState(prevState => ({
@@ -100,13 +101,14 @@ class App extends Component {
 
   render() {
     const { data, modal, loading, status } = this.state;
-    return (<div onKeyDown={this.onClickKeyDown}><Searchbar onSubmit={this.onSubmit} />
+    return (<AppContainer onKeyDown={this.onClickKeyDown}><Searchbar onSubmit={this.onSubmit} />
       {data.length > 0 && <ImageGallery options={this.state.data} onClick={this.onClick} />}
       {modal.length > 0 && <Modal options={this.state.modal} />}
       {loading === true && <Button onClickLoadMore={this.onClickLoadMore} />}
       {status === "pending" && <Loader />}
       {status === "error" && <Notification message="No data" />}
-    </div>)
+      {status === "resolved" && <Notification message="End of List" />}
+    </AppContainer>)
   }
 }
 
