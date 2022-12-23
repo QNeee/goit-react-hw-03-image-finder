@@ -4,13 +4,15 @@ import { fetchImages } from "./fetch";
 import { ImageGallery } from "./ImageGallery/ImageGallery";
 import { Modal } from "./Modal/Modal";
 import { Button } from "./Button/Button";
-import { toHaveFocus } from "@testing-library/jest-dom/dist/matchers";
+import { Loader } from "./Loader/Loader";
+import { Notification } from "./Notification/Notification";
 class App extends Component {
   state = {
     data: [],
     status: '',
     loading: false,
-    inputValue: ''
+    inputValue: '',
+    modal: [],
   }
   page = 1;
   per_page = 12;
@@ -18,7 +20,8 @@ class App extends Component {
     this.page = 1;
     this.setState({
       data: [],
-      inputValue: data.inputValue
+      inputValue: data.inputValue,
+      status: "pending"
     })
     fetchImages(data.inputValue, this.page, this.per_page).then(({ data }) => {
       if (data.totalHits > this.per_page) {
@@ -30,6 +33,12 @@ class App extends Component {
       }
       if (data.totalHits === 0) {
         this.setState({
+          loading: false,
+          status: "error"
+        })
+      }
+      if (data.totalHits < this.per_page && data.totalHits !== 0) {
+        this.setState({
           loading: false
         })
       }
@@ -37,33 +46,67 @@ class App extends Component {
   }
   onClick = (e) => {
     this.setState({
-      data: e,
-      status: "idle"
+      modal: e,
     })
+  }
+  onExitEsc = (e) => {
+    if (e.code === "Escape") {
+      this.setState({
+        modal: [],
+      })
+    }
+  }
+  componentDidUpdate() {
+    if (this.state.modal.length > 0) {
+      window.addEventListener("keydown", this.onExitEsc);
+    } else {
+      window.removeEventListener("keydown", this.onExitEsc);
+    }
+  }
+  plavno = () => {
+    const { height: cardHeight } = document
+      .querySelector(".css-6gimhd")
+      .firstElementChild.getBoundingClientRect();
+
+    window.scrollBy({
+      top: cardHeight * 2,
+      behavior: "smooth",
+    });
   }
   onClickLoadMore = (e) => {
     this.page++;
+    this.setState({
+      status: "pending",
+      loading: false,
+    })
     fetchImages(this.state.inputValue, this.page, this.per_page).then(({ data }) => {
       const totalPages = Math.ceil(data.totalHits / this.per_page);
+      this.plavno();
       if (this.page > totalPages) {
         return this.setState({
-          loading: false
+          loading: false,
+          status: "rejected"
         })
       }
       return this.setState(prevState => ({
-        data: [...prevState.data, ...data.hits]
+        data: [...prevState.data, ...data.hits],
+        status: "rejected",
+        loading: true,
       }))
 
-
     })
+
   }
 
   render() {
-    return <div><Searchbar onSubmit={this.onSubmit} />
-      {this.state.status === "rejected" && <ImageGallery options={this.state.data} onClick={this.onClick} />}
-      {this.state.status === "idle" && <Modal options={this.state.data} />}
-      {this.state.loading === true && <Button onClickLoadMore={this.onClickLoadMore} />}
-    </div>
+    const { data, modal, loading, status } = this.state;
+    return (<div onKeyDown={this.onClickKeyDown}><Searchbar onSubmit={this.onSubmit} />
+      {data.length > 0 && <ImageGallery options={this.state.data} onClick={this.onClick} />}
+      {modal.length > 0 && <Modal options={this.state.modal} />}
+      {loading === true && <Button onClickLoadMore={this.onClickLoadMore} />}
+      {status === "pending" && <Loader />}
+      {status === "error" && <Notification message="No data" />}
+    </div>)
   }
 }
 
