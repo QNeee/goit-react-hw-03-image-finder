@@ -106,7 +106,7 @@ class App extends Component {
       {modal.length > 0 && <Modal options={this.state.modal} />}
       {loading === true && <Button onClickLoadMore={this.onClickLoadMore} />}
       {status === "pending" && <Loader />}
-      {status === "error" && <Notification message="No data" />}
+      {status === "error" && <Notification message="No data!! Please enter valid value" />}
       {status === "resolved" && <Notification message="End of List" />}
     </AppContainer>)
   }
