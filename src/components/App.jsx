@@ -81,14 +81,7 @@ class App extends Component {
       loading: false,
     })
     fetchImages(this.state.inputValue, this.page, this.per_page).then(({ data }) => {
-      const totalPages = Math.ceil(data.totalHits / this.per_page);
       this.plavno();
-      if (this.page > totalPages) {
-        return this.setState({
-          loading: false,
-          status: "resolved"
-        })
-      }
       if (data.hits.length < this.per_page) {
         return this.setState(prevState => ({
           data: [...prevState.data, ...data.hits],
