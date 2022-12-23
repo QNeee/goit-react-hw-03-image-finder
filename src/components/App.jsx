@@ -71,7 +71,7 @@ class App extends Component {
 
     window.scrollBy({
       top: cardHeight * 2,
-      behavior: "smooth",
+      behavior: "smooth"
     });
   }
   onClickLoadMore = (e) => {

@@ -24,7 +24,7 @@ class Searchbar extends Component {
                 placeholder="Search images and photos"
                 value={this.state.inputValue} onChange={this.onChange}
             />
-            <Button type="submit">%</Button>
+            <Button type="submit"></Button>
         </Form></Header>
     }
 }
