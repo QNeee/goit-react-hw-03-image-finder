@@ -98,12 +98,16 @@ class App extends Component {
     })
 
   }
-
+  onClickOverlay = (e) => {
+    return this.setState({
+      modal: []
+    })
+  }
   render() {
     const { data, modal, loading, status } = this.state;
     return (<AppContainer onKeyDown={this.onClickKeyDown}><Searchbar onSubmit={this.onSubmit} />
       {data.length > 0 && <ImageGallery options={this.state.data} onClick={this.onClick} />}
-      {modal.length > 0 && <Modal options={this.state.modal} />}
+      {modal.length > 0 && <Modal options={this.state.modal} onClickOverlay={this.onClickOverlay} />}
       {loading === true && <Button onClickLoadMore={this.onClickLoadMore} />}
       {status === "pending" && <Loader />}
       {status === "error" && <Notification message="No data!! Please enter valid value" />}
