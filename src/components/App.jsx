@@ -89,12 +89,19 @@ class App extends Component {
           status: "resolved"
         })
       }
-      return this.setState(prevState => ({
-        data: [...prevState.data, ...data.hits],
-        status: "rejected",
-        loading: true,
-      }))
-
+      if (data.hits.length < this.per_page) {
+        return this.setState(prevState => ({
+          data: [...prevState.data, ...data.hits],
+          status: "resolved",
+          loading: false,
+        }))
+      } else {
+        return this.setState(prevState => ({
+          data: [...prevState.data, ...data.hits],
+          status: "rejected",
+          loading: true,
+        }))
+      }
     })
 
   }
