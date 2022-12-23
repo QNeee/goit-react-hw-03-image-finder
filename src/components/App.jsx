@@ -99,6 +99,7 @@ class App extends Component {
 
   }
   onClickOverlay = (e) => {
+    if (e.target.nodeName === "IMG") return;
     return this.setState({
       modal: []
     })
