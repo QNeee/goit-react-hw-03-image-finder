@@ -22,7 +22,8 @@ class App extends Component {
     this.setState({
       data: [],
       inputValue: data.inputValue,
-      status: "pending"
+      status: "pending",
+      loading: false
     })
     fetchImages(data.inputValue, this.page, this.per_page).then(({ data }) => {
       if (data.totalHits > this.per_page) {
@@ -34,13 +35,7 @@ class App extends Component {
       }
       if (data.totalHits === 0) {
         this.setState({
-          loading: false,
           status: "error"
-        })
-      }
-      if (data.totalHits < this.per_page && data.totalHits !== 0) {
-        this.setState({
-          loading: false
         })
       }
     });
@@ -83,18 +78,19 @@ class App extends Component {
     fetchImages(this.state.inputValue, this.page, this.per_page).then(({ data }) => {
       this.plavno();
       if (data.hits.length < this.per_page) {
-        return this.setState(prevState => ({
-          data: [...prevState.data, ...data.hits],
+        this.setState({
           status: "resolved",
           loading: false,
-        }))
+        })
       } else {
-        return this.setState(prevState => ({
-          data: [...prevState.data, ...data.hits],
+        this.setState({
           status: "rejected",
           loading: true,
-        }))
+        })
       }
+      return this.setState(prevState => ({
+        data: [...prevState.data, ...data.hits]
+      }))
     })
 
   }
